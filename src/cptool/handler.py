@@ -43,7 +43,7 @@ def run_server(
         print(f'Stopping server on port {port}.')
 
 
-def listen_once():
+def listen_once(path = None):
     payload = None
 
     def set_payload(data) -> None:
@@ -60,8 +60,8 @@ def listen_once():
 
     for i, test in enumerate(payload["tests"]):
         test_id = i + 1
-        with open(f"inp{test_id}", mode="w", encoding="utf-8") as f:
+        with open(f"{path}/inp{test_id}", mode="w", encoding="utf-8") as f:
             f.write(test["input"])
-        with open(f"out{test_id}", mode="w", encoding="utf-8") as f:
+        with open(f"{path}/out{test_id}", mode="w", encoding="utf-8") as f:
             f.write(test["output"])
 

@@ -1,6 +1,7 @@
 import pprint
 import random
 import csv
+import time
 import os.path
 from typing import Optional, Sequence
 
@@ -8,7 +9,6 @@ import requests
 
 user = "Voltair"
 CFAPI = "https://codeforces.com/api"
-
 
 def get_submission(cnt):
     s = str(cnt)
@@ -20,17 +20,45 @@ def get_submission(cnt):
         print("Failed to get submission data saj")
         return
 
-    for submission in f["result"]:
-        idx = submission["problem"]["index"]
-        name = submission["problem"]["name"]
-        verdict = submission["verdict"]
-        if verdict == "OK":
-            print(f"{idx}. {name}   |    Verdict: {verdict}")
-        else:
-            test_passed = submission["passedTestCount"]
-            print(
-                f"{idx}. {name}   |    Verdict: {verdict}, Test passed: {test_passed}"
-            )
+    # for submission in f["result"]:
+    #     idx = submission["problem"]["index"]
+    #     name = submission["problem"]["name"]
+    #     verdict = submission["verdict"]
+    #     if verdict == "OK":
+    #         print(f"{idx}. {name}   |    Verdict: {verdict}")
+    #     else:
+    #         test_passed = submission["passedTestCount"]
+    #         print(
+    #             f"{idx}. {name}   |    Verdict: {verdict}, Test passed: {test_passed}"
+    #         )
+    return f["result"]
+
+def get_verdict(problem_id):
+    last_sub = -1
+    r = requests.get(f"{CFAPI}/user.status?handle=" + user + "&from=1&count=1")
+    f = r.json()
+    if f["status"] != "OK":
+        print("Failed to get submission data saj")
+        return
+    sub = f["result"]
+    recent_prob = f"{sub['problem']['contestId']}{sub['problem']['index']}"
+    if recent_prob != problem_id or sub["id"] == last_sub:
+        return
+    last_sub = sub["id"]
+    idx = sub["problem"]["index"]
+    name = sub["problem"]["name"]
+    verdict = sub["verdict"]
+    if verdict == "OK":
+        print(f"{idx}. {name}   |    Verdict: {verdict}")
+        return True
+    else:
+        test_passed = sub["passedTestCount"]
+        print(
+            f"{idx}. {name}   |    Verdict: {verdict}, Test passed: {test_passed}"
+        )
+    return False
+
+
 
 def update_solved_problem_list():
     r = requests.get(f"{CFAPI}/user.status?handle=" + user + "&from=1")
@@ -100,8 +128,6 @@ def get_problem_list():
 def get_random_problem():
     valid_problems = get_problem_list()
     problem = random.choice(valid_problems)
-    problem_link = f"https://codeforces.com/contest/{problem['contestId']}/problem/{problem['index']}"
-    print(f"Problem link: {problem_link}")
     return problem
 
 def main(agrv: Optional[Sequence[str]] = None) -> int:

@@ -3,7 +3,6 @@ import json
 from contextlib import contextmanager
 from typing import Generator
 import pprint
-import argparse
 
 class CompetitiveCompanionHandler(BaseHTTPRequestHandler):
     callback = None
@@ -66,10 +65,3 @@ def listen_once():
         with open(f"out{test_id}", mode="w", encoding="utf-8") as f:
             f.write(test["output"])
 
-
-def main(argv: Sequence[str] | None = None) -> int:
-    parser = argparse.ArgumentParser()
-    return 0
-
-if __name__ == "__main__":
-    raise SystemExit(main())

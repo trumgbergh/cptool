@@ -3,9 +3,9 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "CFTool"
-description = "CFTool"
-keywords = ["CFTool"]
+name = "cptool"
+description = "cptool"
+keywords = ["cptool"]
 version = "0.0.2"
 requires-python = ">=3.9"
 dependencies = [
@@ -34,4 +34,4 @@ addopts = "-ra -v"
 where = ["src"]
 
 [project.scripts]
-chess = "chess.main:main"
+cptool = "cptool.main:main"

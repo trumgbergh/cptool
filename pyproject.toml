@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "CFTool"
+description = "CFTool"
+keywords = ["CFTool"]
+version = "0.0.2"
+requires-python = ">=3.9"
+dependencies = [
+    "requests",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pre-commit",
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -v"
+
+[tool.setuptools.packages.find]
+# Note: set this if we are using src layout.
+where = ["src"]
+
+[project.scripts]
+chess = "chess.main:main"

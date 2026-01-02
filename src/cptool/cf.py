@@ -10,53 +10,57 @@ import requests
 user = "Voltair"
 CFAPI = "https://codeforces.com/api"
 
-def get_submission(cnt):
+def get_recent_submission(cnt):
     s = str(cnt)
     print("Last " + s + " submission(s):\n")
     r = requests.get(f"{CFAPI}/user.status?handle=" + user + "&from=1&count=" + s)
     f = r.json()
-    print(f["status"])
     if f["status"] != "OK":
         print("Failed to get submission data saj")
         return
 
-    # for submission in f["result"]:
-    #     idx = submission["problem"]["index"]
-    #     name = submission["problem"]["name"]
-    #     verdict = submission["verdict"]
-    #     if verdict == "OK":
-    #         print(f"{idx}. {name}   |    Verdict: {verdict}")
-    #     else:
-    #         test_passed = submission["passedTestCount"]
-    #         print(
-    #             f"{idx}. {name}   |    Verdict: {verdict}, Test passed: {test_passed}"
-    #         )
-    return f["result"]
+    for submission in f["result"]:
+        idx = submission["problem"]["index"]
+        name = submission["problem"]["name"]
+        verdict = submission["verdict"]
+        if verdict == "OK":
+            print(f"{idx}. {name}   |    Verdict: {verdict}")
+        else:
+            test_passed = submission["passedTestCount"]
+            print(
+                f"{idx}. {name}   |    Verdict: {verdict}, Test passed: {test_passed}"
+            )
 
-def get_verdict(problem_id):
+def get_verdict(problem_id) -> int:
     last_sub = -1
     r = requests.get(f"{CFAPI}/user.status?handle=" + user + "&from=1&count=1")
     f = r.json()
     if f["status"] != "OK":
         print("Failed to get submission data saj")
-        return
-    sub = f["result"]
+        return 0
+    sub = f["result"][0]
     recent_prob = f"{sub['problem']['contestId']}{sub['problem']['index']}"
     if recent_prob != problem_id or sub["id"] == last_sub:
-        return
+        return 0
     last_sub = sub["id"]
     idx = sub["problem"]["index"]
     name = sub["problem"]["name"]
     verdict = sub["verdict"]
+    if verdict == "TESTING":
+        test_passed = sub["passedTestCount"]
+        print(
+            f"{idx}. {name}   |    Verdict: {verdict}, Test passed: {test_passed}"
+        )
+        return 0
     if verdict == "OK":
         print(f"{idx}. {name}   |    Verdict: {verdict}")
-        return True
+        return 1
     else:
         test_passed = sub["passedTestCount"]
         print(
             f"{idx}. {name}   |    Verdict: {verdict}, Test passed: {test_passed}"
         )
-    return False
+    return -1 
 
 
 
@@ -131,7 +135,7 @@ def get_random_problem():
     return problem
 
 def main(agrv: Optional[Sequence[str]] = None) -> int:
-    get_random_problem()
+    get_verdict("100C")
 
 if __name__ == "__main__":
     exit(main())

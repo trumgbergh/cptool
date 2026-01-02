@@ -50,46 +50,45 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                               default = "~/competitive_programming/train_station",
                               help = "Set the destination folder for the training session")
 
-    train_parser.add_argument('--cnt',
-                              type = problem_cnt,
-                              default = 1,
-                              help = "Number of problems to solve in a training session (default = %(default)s, min 1 max inf)")
-
     args = parser.parse_args(argv)
 
-
+    dest = os.path.expanduser(args.dest)
+    print(f"Path: {dest}")
     if args.command == "train":
         if args.min_elo > args.max_elo:
             raise argparse.ArgumentTypeError(f"Invalid range: min elo ({args.min_elo}) is higher than max elo ({args.max_elo}).")
         print("Starting training session...")
         print("Creating training folder...")
-        folder_name = datetime.now().strftime("training_session-%Y-%m-%d_%H-%M")
-        path = f"{args.dest}/{folder_name}"
+        folder_name = datetime.now().strftime("training_session-%Y-%m-%d")
+        path = os.path.join(dest, folder_name)
+        print(path)
         try:
             os.makedirs(path)
             print(f"Folder '{folder_name}' created successfully!")
         except FileExistsError:
             print(f"Folder '{folder_name}' already exists")
-        # cf.update_problem_list((args.min_elo, args.max_elo))
-        # cf.update_solved_problem_list()
-        # for i in range(args.cnt):
-        #     problem = cf.get_random_problem()
-        #     problem_id = f"{problem['contestId']}{problem['index']}"
-        #     problem_link = f"https://codeforces.com/contest/{problem['contestId']}/problem/{problem['index']}"
-        #     print(f"Problem {i + 1}: {problem_id}  {problem['name']}")
-        #     print(f"Problem link: {problem_link}")
-        #     print(f"Setting up working folder...")
-        #     template_path = os.path.expanduser(f"{args.dest}/template")
-        #     work_path = os.path.expanduser(f"{path}/{problem_id}")
-        #
-        #     subprocess.run(["cp", "-r", template_path, work_path], check=True)
-        #     print(f"Use the competitive companion on the webbrowser - Listening for input and output...")
-        #     handler.listen_once()
-        #
-        #     print("GLHF")
-        #     while cf.get_verdict(problem_id) is not True:
-        #         time.sleep(5)
-        # print("gg")
+        cf.update_problem_list((args.min_elo, args.max_elo))
+        cf.update_solved_problem_list()
+
+        print()
+        problem = cf.get_random_problem()
+        problem_id = f"{problem['contestId']}{problem['index']}"
+        problem_link = f"https://codeforces.com/contest/{problem['contestId']}/problem/{problem['index']}"
+        print(f"Problem: {problem_id} {problem['name']}")
+        print(f"Problem link: {problem_link}")
+        print(f"Setting up working folder...")
+        template_path = os.path.expanduser(f"{dest}/template")
+        work_path = os.path.expanduser(f"{path}/{problem_id}")
+
+        subprocess.run(["cp", "-r", template_path, work_path], check=True)
+        print(f"Use the competitive companion on the webbrowser - Listening for input and output...")
+        handler.listen_once(work_path)
+
+        print("GLHF")
+        time.sleep(2)
+        while cf.get_verdict(problem_id) == 0:
+            time.sleep(2)
+        print("gg")
     return 0
 
 if __name__ == "__main__":

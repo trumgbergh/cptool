@@ -35,13 +35,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     train_parser = subparsers.add_parser("train")
     train_parser.add_argument('--min-elo',
                               type = elo_range,
-                              default = 1500,
+                              default = 1600,
                               help = "Set the minimum difficulty of the problems (default = %(default)s, min 800 max 3500)",
                               )
 
     train_parser.add_argument('--max-elo',
                               type = elo_range,
-                              default = 1900,
+                              default = 2000,
                               help = "Set the maximum difficulty of the problems (default = %(default)s, min 800 max 3500)",
                               )
 

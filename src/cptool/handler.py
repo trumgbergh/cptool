@@ -62,6 +62,6 @@ def listen_once(path = None):
         test_id = i + 1
         with open(f"{path}/inp{test_id}", mode="w", encoding="utf-8") as f:
             f.write(test["input"])
-        with open(f"{path}/out{test_id}", mode="w", encoding="utf-8") as f:
+        with open(f"{path}/ans{test_id}", mode="w", encoding="utf-8") as f:
             f.write(test["output"])
 
